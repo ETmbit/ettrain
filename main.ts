@@ -1106,10 +1106,10 @@ namespace PxWheelsOne {
 //  END INCLUDE  //
 ///////////////////
 
-///////////////
-//  INCLUDE  //
-//  etkart.ts //
-///////////////
+/////////////////
+//  INCLUDE    //
+//  ettrain.ts //
+/////////////////
 
 enum ETfield {
     //% block="in the field"
@@ -1149,7 +1149,7 @@ let etBuggyOnOrangeHandler: () => void
 let etBuggyOnPurpleHandler: () => void
 let etBuggyOnBorderHandler: () => void
 
-//% color="#FF8844" icon="\uf1b9"
+//% color="#FF8844" icon="\uf238"
 //% block="Train"
 //% block.loc.nl="Trein"
 namespace EtTrain {

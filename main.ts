@@ -1155,15 +1155,43 @@ let etBuggyOnBorderHandler: () => void
 namespace EtTrain {
 
     let train = PxWheelsOne.create({ Port: MotorPort.M2, Revert: true })
+    let dir = ETmoveY.Forward
+    let speed = 0
 
-    //% block="drive %dir with %speed \\% speed"
-    //% block.loc.nl="rijd %dir met %speed \\% snelheid"
-    //% speed.min = 0 speed.max=100 speed.defl=30
-    export function drive(dir: ETmoveY, speed: number) {
-        if (speed < 0) speed = 0
-        if (speed > 100) speed = 100
-        speed = (dir === ETmoveY.Forward ? speed : -speed)
-        train.speed(speed)
+    //% block="drive forward"
+    //% block.loc.nl="rijd vooruit"
+    export function forward() {
+        stop()
+        dir = ETmoveY.Forward
+    }
+
+    //% block="drive backward"
+    //% block.loc.nl="rijd achteruit"
+    export function backward() {
+        stop()
+        dir = ETmoveY.Backward
+    }
+
+    //% block="drive with %speed \\% speed"
+    //% block.loc.nl="rijd met %speed \\% snelheid"
+    //% spd.min = 0 spd.max=100 spd.defl=0
+    export function drive(spd: number) {
+        if (spd < 0) spd = 0
+        if (spd > 100) spd = 100
+        if (speed < spd)
+            while (speed < spd) {
+                speed += 5
+                train.speed(dir == ETmoveY.Forward ? speed : -speed)
+                basic.pause(300)
+            }
+        if (speed > spd)
+            while (speed > spd) {
+                speed -= 5
+                train.speed(dir == ETmoveY.Forward ? speed : -speed)
+                basic.pause(300)
+            }
+        speed = spd
+        train.speed(dir == ETmoveY.Forward ? speed : -speed)
     }
 
     //% block="stop"

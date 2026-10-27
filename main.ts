@@ -630,10 +630,10 @@ enum ETtouchEvent {
 // END INCLUDE //
 /////////////////
 
-///////////////////
-//  INCLUDE      //
-//  ettiltpad.ts //
-///////////////////
+/////////////////////////
+//  INCLUDE            //
+//  ettiltpad-slave.ts //
+/////////////////////////
 
 // the next constants agree with 'et-tiltpad-app.ts'
 
@@ -839,22 +839,22 @@ namespace EtTiltpad {
         if (num < 0) return
         switch (but) {
             case ETtouchButton.Left:
-                if (onLeftHandler.length > num) onLeftHandler[num] = code
+                if (onLeftHandlerR.length > num) onLeftHandlerR[num] = code
                 break
             case ETtouchButton.A:
-                if (onAHandler.length > num) onAHandler[num] = code;
+                if (onAHandlerR.length > num) onAHandlerR[num] = code;
                 break
             case ETtouchButton.B:
-                if (onBHandler.length > num) onBHandler[num] = code
+                if (onBHandlerR.length > num) onBHandlerR[num] = code
                 break
             case ETtouchButton.C:
-                if (onCHandler.length > num) onCHandler[num] = code
+                if (onCHandlerR.length > num) onCHandlerR[num] = code
                 break
             case ETtouchButton.D:
-                if (onDHandler.length > num) onDHandler[num] = code
+                if (onDHandlerR.length > num) onDHandlerR[num] = code
                 break
             case ETtouchButton.Right:
-                if (onRightHandler.length > num) onRightHandler[num] = code
+                if (onRightHandlerR.length > num) onRightHandlerR[num] = code
                 break
         }
     }
@@ -957,6 +957,13 @@ namespace EtTiltpad {
         onBHandler.splice(0, onBHandler.length)
         onCHandler.splice(0, onCHandler.length)
         onDHandler.splice(0, onDHandler.length)
+        onLeftHandlerR.splice(0, onLeftHandler.length)
+        onRightHandlerR.splice(0, onRightHandler.length)
+        onAHandlerR.splice(0, onAHandler.length)
+        onBHandlerR.splice(0, onBHandler.length)
+        onCHandlerR.splice(0, onCHandler.length)
+        onDHandlerR.splice(0, onDHandler.length)
+        tilt.splice(0, tilt.length)
 
         for (let i = 0; i < cnt; i++) {
             onPitchHandler.push(null)
@@ -968,7 +975,12 @@ namespace EtTiltpad {
             onBHandler.push(null)
             onCHandler.push(null)
             onDHandler.push(null)
-
+            onLeftHandlerR.push(null)
+            onRightHandlerR.push(null)
+            onAHandlerR.push(null)
+            onBHandlerR.push(null)
+            onCHandlerR.push(null)
+            onDHandlerR.push(null)
             tilt.push({ pitch: 999, roll: 999, yaw: 999 })
         }
     }
@@ -1178,59 +1190,89 @@ namespace PxWheelsOne {
 namespace EtTrain {
 
     let train = PxWheelsOne.create({ Port: MotorPort.M2, Revert: true })
-    let dir = ETmoveY.Forward
-    let speed = 0
+    let direction = ETmoveY.Forward
+    let curspeed = 0    // 0 .. 100
+    let newspeed = 0    // 0 .. 100
+    let showspeed = 0   // 0 .. 9
+
+    basic.forever(function() {
+        if (newspeed > curspeed)
+            curspeed ++
+        if (newspeed < curspeed)
+            curspeed --
+        train.speed(direction == ETmoveY.Forward ? curspeed : -curspeed)
+
+        let spd = Math.floor( curspeed / 11) // values 0 .. 9
+        if (showspeed != spd) {
+            showspeed  = spd
+            etradio.send(ET_TILTPADID, showspeed.toString())
+        }
+        basic.pause(50)
+    })
 
     //% block="drive forward"
     //% block.loc.nl="rijd vooruit"
     export function forward() {
-        stop()
-        dir = ETmoveY.Forward
+        newspeed = 0
+        while (curspeed) pause(10)
+        direction = ETmoveY.Forward
     }
 
     //% block="drive backward"
     //% block.loc.nl="rijd achteruit"
     export function backward() {
-        stop()
-        dir = ETmoveY.Backward
+        newspeed = 0
+        while (curspeed) pause(10)
+        direction = ETmoveY.Backward
     }
 
-    //% block="drive with %speed \\% speed"
-    //% block.loc.nl="rijd met %speed \\% snelheid"
-    //% spd.min = 0 spd.max=100 spd.defl=0
-    export function drive(spd: number) {
-        if (spd < 0) spd = 0
-        if (spd > 100) spd = 100
-        if (speed < spd)
-            while (speed < spd) {
-                speed += 2
-                train.speed(dir == ETmoveY.Forward ? speed : -speed)
-                basic.pause(300)
-            }
-        if (speed > spd)
-            while (speed > spd) {
-                speed -= 2
-                train.speed(dir == ETmoveY.Forward ? speed : -speed)
-                basic.pause(300)
-            }
-        speed = spd
-        train.speed(dir == ETmoveY.Forward ? speed : -speed)
+    //% block="drive with speed %newspeed"
+    //% block.loc.nl="rijd met snelheid %newspeed"
+    //% newspeed.min = 0 newspeed.max=100 newspeed.defl=0
+    export function drive(speed: number) {
+        if (speed < 0) speed = 0
+        if (speed > 100) speed = 100
+        newspeed = speed
     }
 
-    //% block="stop"
-    //% block.loc.nl="stop"
-    export function stop() {
-        drive(0)
+    //% block="decellerate"
+    //% block.loc.nl="vertraag"
+    export function slowDown() {
+        newspeed = 0
+    }
+
+    //% block="constant speed"
+    //% block.loc.nl="constante snelheid"
+    export function keepSpeed() {
+        newspeed = curspeed
+    }
+
+    //% block="accellerate"
+    //% block.loc.nl="versnel"
+    export function speedUp() {
+        newspeed = 100
     }
 
     //% block="emergency stop"
     //% block.loc.nl="noodstop"
-    export function emergencyStop() {
-        speed = 0
-        train.speed(0)
+    export function stop() {
+        newspeed = 0
+        curspeed = 0
     }
 }
 
 ///////////////////
 //  END INCLUDE  //
 ///////////////////
+
+input.onButtonPressed(Button.A, function () {
+    EtTrain.speedUp()
+})
+
+input.onButtonPressed(Button.B, function () {
+    EtTrain.slowDown()
+})
+
+input.onLogoEvent(TouchButtonEvent.Pressed, function() {
+    EtTrain.keepSpeed()
+})

@@ -456,7 +456,6 @@ let ETradioMsg: { [id: string]: ETradioMessages } = {}
 let ETradioTime = 0
 
 radio.onReceivedString(function (chunk: string) {
-
     ETradioTime = input.runningTime()
 
     let parts = chunk.split("|")
@@ -671,36 +670,51 @@ namespace EtTiltpad {
         yaw: number
     }
 
+    let tilt: itilt[] = []
+
     let onTiltHandler: (() => void)[] = []
     let onRollHandler: (() => void)[] = []
     let onPitchHandler: (() => void)[] = []
     let onYawHandler: (() => void)[] = []
+
     let onLeftHandler: (() => void)[] = []
     let onRightHandler: (() => void)[] = []
     let onAHandler: (() => void)[] = []
     let onBHandler: (() => void)[] = []
     let onCHandler: (() => void)[] = []
     let onDHandler: (() => void)[] = []
-    let onReleasedHandler: (() => void)[] = []
 
-    let tilt: itilt[] = []
+    let onLeftHandlerR: (() => void)[] = []
+    let onRightHandlerR: (() => void)[] = []
+    let onAHandlerR: (() => void)[] = []
+    let onBHandlerR: (() => void)[] = []
+    let onCHandlerR: (() => void)[] = []
+    let onDHandlerR: (() => void)[] = []
+
+    tilt.push({ pitch: 999, roll: 999, yaw: 999 })
 
     onTiltHandler.push(null)
     onRollHandler.push(null)
     onPitchHandler.push(null)
     onYawHandler.push(null)
+
     onLeftHandler.push(null)
     onRightHandler.push(null)
     onAHandler.push(null)
     onBHandler.push(null)
     onCHandler.push(null)
     onDHandler.push(null)
-    onReleasedHandler.push(null)
 
-    tilt.push({ pitch: 999, roll: 999, yaw: 999 })
+    onLeftHandlerR.push(null)
+    onRightHandlerR.push(null)
+    onAHandlerR.push(null)
+    onBHandlerR.push(null)
+    onCHandlerR.push(null)
+    onDHandlerR.push(null)
 
     export function handleTilt(num: number, prm: string, val: number) {
-        if (num < 0) return
+        if (num < 1) return
+        num--
         if (prm == ET_TILT) {
             let parts = prm.split("|")
             if (parts.length != 3) return
@@ -711,45 +725,73 @@ namespace EtTiltpad {
         }
         else
             if (prm == ET_BUTTON) {
-                if (val > 5) {
-                    if ((num < onReleasedHandler.length) && onReleasedHandler[num])
-                        onReleasedHandler[num]()
+                if (val < 6) {
+                    switch (val) {
+                        case ETtouchButton.Left:
+                            if ((num < onLeftHandler.length) && onLeftHandler[num]) {
+                                onLeftHandler[num]()
+                            }
+                            break
+                        case ETtouchButton.Right:
+                            if ((num < onRightHandler.length) && onRightHandler[num])
+                                onRightHandler[num]()
+                            break
+                        case ETtouchButton.A:
+                            if ((num < onAHandler.length) && onAHandler[num])
+                                onAHandler[num]()
+                            break
+                        case ETtouchButton.B:
+                            if ((num < onBHandler.length) && onBHandler[num])
+                                onBHandler[num]()
+                            break
+                        case ETtouchButton.C:
+                            if ((num < onCHandler.length) && onCHandler[num])
+                                onCHandler[num]()
+                            break
+                        case ETtouchButton.D:
+                            if ((num < onDHandler.length) && onDHandler[num])
+                                onDHandler[num]()
+                            break
+                    }
                     return
                 }
-                switch (val) {
-                    case ETtouchButton.Left:
-                        if ((num < onLeftHandler.length) && onLeftHandler[num])
-                            onLeftHandler[num]()
-                        break
-                    case ETtouchButton.Right:
-                        if ((num < onRightHandler.length) && onRightHandler[num])
-                            onRightHandler[num]()
-                        break
-                    case ETtouchButton.A:
-                        if ((num < onAHandler.length) && onAHandler[num])
-                            onAHandler[num]()
-                        break
-                    case ETtouchButton.B:
-                        if ((num < onBHandler.length) && onBHandler[num])
-                            onBHandler[num]()
-                        break
-                    case ETtouchButton.C:
-                        if ((num < onCHandler.length) && onCHandler[num])
-                            onCHandler[num]()
-                        break
-                    case ETtouchButton.D:
-                        if ((num < onDHandler.length) && onDHandler[num])
-                            onDHandler[num]()
-                        break
+                else {
+                    val -= 6
+                    switch (val) {
+                        case ETtouchButton.Left:
+                            if ((num < onLeftHandlerR.length) && onLeftHandlerR[num])
+                                onLeftHandlerR[num]()
+                            break
+                        case ETtouchButton.Right:
+                            if ((num < onRightHandlerR.length) && onRightHandlerR[num])
+                                onRightHandlerR[num]()
+                            break
+                        case ETtouchButton.A:
+                            if ((num < onAHandlerR.length) && onAHandlerR[num])
+                                onAHandlerR[num]()
+                            break
+                        case ETtouchButton.B:
+                            if ((num < onBHandlerR.length) && onBHandlerR[num])
+                                onBHandlerR[num]()
+                            break
+                        case ETtouchButton.C:
+                            if ((num < onCHandlerR.length) && onCHandlerR[num])
+                                onCHandlerR[num]()
+                            break
+                        case ETtouchButton.D:
+                            if ((num < onDHandlerR.length) && onDHandlerR[num])
+                                onDHandlerR[num]()
+                            break
+                    }
                 }
             }
     }
 
     //% color="#802080"
-    //% block="when a button is released"
+    //% block="when button %but is released"
     //% block.loc.nl="wanneer een knop wordt losgelaten"
-    export function onButtonReleased(code: () => void): void {
-        onTiltpadButtonReleased(1, code)
+    export function onButtonReleased(but: ETtouchButton, code: () => void): void {
+        onTiltpadButtonReleased(but, 1, code)
     }
 
     //% color="#802080"
@@ -789,13 +831,32 @@ namespace EtTiltpad {
 
     //% subcategory="Meerdere pads"
     //% color="#802080"
-    //% block="when a button is released"
-    //% block.loc.nl="wanneer een knop wordt losgelaten"
+    //% block="when button %but of touchpad %num is released"
+    //% block.loc.nl="wanneer de %but knop van tiltpad %num wordt losgelaten"
     //% num.min=1 num.max=10
-    export function onTiltpadButtonReleased(num: number, code: () => void): void {
+    export function onTiltpadButtonReleased(but: ETtouchButton, num: number, code: () => void): void {
         num -= 1
-        if (num >= 0 && num < onReleasedHandler.length)
-            onReleasedHandler[num] = code
+        if (num < 0) return
+        switch (but) {
+            case ETtouchButton.Left:
+                if (onLeftHandler.length > num) onLeftHandler[num] = code
+                break
+            case ETtouchButton.A:
+                if (onAHandler.length > num) onAHandler[num] = code;
+                break
+            case ETtouchButton.B:
+                if (onBHandler.length > num) onBHandler[num] = code
+                break
+            case ETtouchButton.C:
+                if (onCHandler.length > num) onCHandler[num] = code
+                break
+            case ETtouchButton.D:
+                if (onDHandler.length > num) onDHandler[num] = code
+                break
+            case ETtouchButton.Right:
+                if (onRightHandler.length > num) onRightHandler[num] = code
+                break
+        }
     }
 
     //% subcategory="Meerdere pads"

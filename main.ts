@@ -1111,44 +1111,6 @@ namespace PxWheelsOne {
 //  ettrain.ts //
 /////////////////
 
-enum ETfield {
-    //% block="in the field"
-    //% block.loc.nl="in het veld"
-    InField,
-    //% block="over a marker"
-    //% block.loc.nl="over een markering"
-    OnMarker,
-    //% block="on the line"
-    //% block.loc.nl="op de lijn"
-    OnBorder,
-    //% block="outside the field"
-    //% block.loc.nl="buiten het veld"
-    OutsideField,
-}
-
-enum ETtrackMode {
-    //% block="outside the field"
-    //% block.loc.nl="uit het veld"
-    FieldBorder,
-    //% block="off the line"
-    //% block.loc.nl="van de lijn"
-    LineFollow,
-}
-
-let etBuggyActivateServoHandler: (active: boolean) => void
-
-let etBuggyOnRedHandler: () => void
-let etBuggyOnGreenHandler: () => void
-let etBuggyOnBlueHandler: () => void
-let etBuggyOnYellowHandler: () => void
-let etBuggyOnCyanHandler: () => void
-let etBuggyOnMagentaHandler: () => void
-let etBuggyOnBlackHandler: () => void
-let etBuggyOnWhiteHandler: () => void
-let etBuggyOnOrangeHandler: () => void
-let etBuggyOnPurpleHandler: () => void
-let etBuggyOnBorderHandler: () => void
-
 //% color="#FF8844" icon="\uf238"
 //% block="Train"
 //% block.loc.nl="Trein"

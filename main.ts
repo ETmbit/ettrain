@@ -1216,6 +1216,7 @@ namespace EtTrain {
         newspeed = 0
         while (curspeed) pause(10)
         direction = ETmoveY.Forward
+        etradio.send(ET_TILTPADID, "F")
     }
 
     //% block="drive backward"
@@ -1224,6 +1225,7 @@ namespace EtTrain {
         newspeed = 0
         while (curspeed) pause(10)
         direction = ETmoveY.Backward
+        etradio.send(ET_TILTPADID, "R")
     }
 
     //% block="drive with speed %newspeed"
@@ -1265,14 +1267,6 @@ namespace EtTrain {
 //  END INCLUDE  //
 ///////////////////
 
-input.onButtonPressed(Button.A, function () {
-    EtTrain.speedUp()
-})
-
-input.onButtonPressed(Button.B, function () {
-    EtTrain.slowDown()
-})
-
-input.onLogoEvent(TouchButtonEvent.Pressed, function() {
-    EtTrain.keepSpeed()
+input.onButtonPressed(Button.B, function() {
+    EtTrain.stop()
 })

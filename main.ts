@@ -1203,13 +1203,13 @@ namespace EtTrain {
         if (spd > 100) spd = 100
         if (speed < spd)
             while (speed < spd) {
-                speed += 5
+                speed += 2
                 train.speed(dir == ETmoveY.Forward ? speed : -speed)
                 basic.pause(300)
             }
         if (speed > spd)
             while (speed > spd) {
-                speed -= 5
+                speed -= 2
                 train.speed(dir == ETmoveY.Forward ? speed : -speed)
                 basic.pause(300)
             }
@@ -1220,6 +1220,13 @@ namespace EtTrain {
     //% block="stop"
     //% block.loc.nl="stop"
     export function stop() {
+        drive(0)
+    }
+
+    //% block="emergency stop"
+    //% block.loc.nl="noodstop"
+    export function emergencyStop() {
+        speed = 0
         train.speed(0)
     }
 }

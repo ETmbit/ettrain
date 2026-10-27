@@ -1190,6 +1190,7 @@ namespace PxWheelsOne {
 namespace EtTrain {
 
     let train = PxWheelsOne.create({ Port: MotorPort.M2, Revert: true })
+    let swap = 1
     let direction = ETmoveY.Forward
     let curspeed = 0    // 0 .. 100
     let newspeed = 0    // 0 .. 100
@@ -1200,7 +1201,7 @@ namespace EtTrain {
             curspeed ++
         if (newspeed < curspeed)
             curspeed --
-        train.speed(direction == ETmoveY.Forward ? curspeed : -curspeed)
+        train.speed(direction == ETmoveY.Forward ? curspeed * swap : -curspeed * swap)
 
         let spd = Math.floor( curspeed / 11) // values 0 .. 9
         if (showspeed != spd) {
@@ -1209,6 +1210,12 @@ namespace EtTrain {
         }
         basic.pause(50)
     })
+
+    //% block="swap forward and backward"
+    //% block.loc.nl="draai vooruit en achteruit om"
+    export function swapDirection() {
+        swap = -swap
+    }
 
     //% block="drive forward"
     //% block.loc.nl="rijd vooruit"

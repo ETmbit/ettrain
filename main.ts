@@ -1206,7 +1206,13 @@ namespace EtTrain {
         let spd = Math.floor( curspeed / 11) // values 0 .. 9
         if (showspeed != spd) {
             showspeed  = spd
-            etradio.send(ET_TILTPADID, showspeed.toString())
+            if (showspeed > 0)
+                etradio.send(ET_TILTPADID, showspeed.toString())
+            else {
+                etradio.send(ET_TILTPADID, "0")
+                basic.pause(500)
+                etradio.send(ET_TILTPADID, direction == ETmoveY.Forward ? "F" : "R")
+            }
         }
         basic.pause(50)
     })

@@ -600,17 +600,17 @@ enum ETtouchButton {
     //% block="left"
     //% block.loc.nl="linker"
     Left,
-    //% block="a-"
-    //% block.loc.nl="a-"
+    //% block="a"
+    //% block.loc.nl="a"
     A,
-    //% block="b-"
-    //% block.loc.nl="b-"
+    //% block="b"
+    //% block.loc.nl="b"
     B,
-    //% block="c-"
-    //% block.loc.nl="c-"
+    //% block="c"
+    //% block.loc.nl="c"
     C,
-    //% block="d-"
-    //% block.loc.nl="d-"
+    //% block="d"
+    //% block.loc.nl="d"
     D,
     //% block="right"
     //% block.loc.nl="rechter"

@@ -1062,6 +1062,44 @@ type Servo = { Port: ServoPort, Revert: boolean }
 //  END INCLUDE  //
 ///////////////////
 
+/////////////////
+//  INCLUDE    //
+//  et-led.ts  //
+/////////////////
+
+namespace EtLed {
+
+    export class Device {
+
+        port: RJPort
+        line: RJLine
+
+        constructor(port: RJPort, line: RJLine) {
+            this.port = port
+            this.line = line
+        }
+
+        on() {
+            let pin = RJ.digitalPin(this.port, this.line)
+            pins.digitalWritePin(pin, 1)
+        }
+
+        off() {
+            let pin = RJ.digitalPin(this.port, this.line)
+            pins.digitalWritePin(pin, 0)
+        }
+    }
+
+    export function create(port: RJPort, line: RJLine): Device {
+        let device = new Device(port, line)
+        return device
+    }
+}
+
+///////////////////
+//  END INCLUDE  //
+///////////////////
+
 ///////////////////////
 //  INCLUDE          //
 //  px-wheelsone.ts  //
@@ -1190,6 +1228,9 @@ namespace PxWheelsOne {
 namespace EtTrain {
 
     let train = PxWheelsOne.create({ Port: MotorPort.M2, Revert: true })
+
+    let led1 = EtLed.create(RJPort.J3, RJLine.L1)
+    let led2 = EtLed.create(RJPort.J3, RJLine.L2)
     let swap = 1
     let direction = ETmoveY.Forward
     let curspeed = 0    // 0 .. 100
@@ -1221,6 +1262,14 @@ namespace EtTrain {
     //% block.loc.nl="draai vooruit en achteruit om"
     export function swapDirection() {
         swap = -swap
+        if (swap) {
+            led1.on()
+            led2.off()
+        }
+        else {
+            led1.off()
+            led2.on()
+        }
     }
 
     //% block="drive forward"
@@ -1283,3 +1332,5 @@ namespace EtTrain {
 input.onButtonPressed(Button.B, function() {
     EtTrain.stop()
 })
+
+EtTrain.swapDirection()

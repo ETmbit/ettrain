@@ -1259,7 +1259,7 @@ namespace EtTrain {
     })
 
     function showLeds() {
-        if (swap) {
+        if (swap > 0) {
             if (direction == ETmoveY.Forward) {
                 led1.on()
                 led2.off()

@@ -1261,22 +1261,22 @@ namespace EtTrain {
     function showLeds() {
         if (swap > 0) {
             if (direction == ETmoveY.Forward) {
-                led1.on()
-                led2.off()
-            }
-            else {
                 led1.off()
                 led2.on()
+            }
+            else {
+                led1.on()
+                led2.off()
             }
         }
         else {
             if (direction == ETmoveY.Forward) {
-                led1.off()
-                led2.on()
-            }
-            else {
                 led1.on()
                 led2.off()
+            }
+            else {
+                led1.off()
+                led2.on()
             }
         }
     }
@@ -1353,4 +1353,4 @@ input.onButtonPressed(Button.B, function() {
     EtTrain.stop()
 })
 
-EtTrain.forward()
+EtTrain.swapDirection()

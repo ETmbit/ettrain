@@ -1258,18 +1258,36 @@ namespace EtTrain {
         basic.pause(50)
     })
 
+    function showLeds() {
+        if (swap) {
+            if (direction == ETmoveY.Forward) {
+                led1.on()
+                led2.off()
+            }
+            else {
+                led1.off()
+                led2.on()
+            }
+        }
+        else {
+            if (direction == ETmoveY.Forward) {
+                led1.off()
+                led2.on()
+            }
+            else {
+                led1.on()
+                led2.off()
+            }
+        }
+    }
+
     //% block="swap forward and backward"
     //% block.loc.nl="draai vooruit en achteruit om"
     export function swapDirection() {
+        newspeed = 0
+        while (curspeed) pause(10)
         swap = -swap
-        if (swap) {
-            led1.on()
-            led2.off()
-        }
-        else {
-            led1.off()
-            led2.on()
-        }
+        showLeds()
     }
 
     //% block="drive forward"
@@ -1278,6 +1296,7 @@ namespace EtTrain {
         newspeed = 0
         while (curspeed) pause(10)
         direction = ETmoveY.Forward
+        showLeds()
         etradio.send(ET_TILTPADID, "F")
     }
 
@@ -1287,6 +1306,7 @@ namespace EtTrain {
         newspeed = 0
         while (curspeed) pause(10)
         direction = ETmoveY.Backward
+        showLeds()
         etradio.send(ET_TILTPADID, "R")
     }
 
@@ -1333,4 +1353,4 @@ input.onButtonPressed(Button.B, function() {
     EtTrain.stop()
 })
 
-EtTrain.swapDirection()
+EtTrain.forward()

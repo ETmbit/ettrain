@@ -1280,6 +1280,7 @@ namespace EtTrain {
             }
         }
     }
+    showLeds()
 
     //% block="swap forward and backward"
     //% block.loc.nl="draai vooruit en achteruit om"
@@ -1352,5 +1353,3 @@ namespace EtTrain {
 input.onButtonPressed(Button.B, function() {
     EtTrain.stop()
 })
-
-EtTrain.swapDirection()
